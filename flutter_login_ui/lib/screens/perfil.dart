@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 
+
+
 class Perfil extends StatelessWidget {
   static const String ROUTE = "/perfil";
 
@@ -20,14 +22,14 @@ class Perfil extends StatelessWidget {
         title: Text("Guardar"),
       ),
       body: Container(
-        child: _buildForm(),
-      ),
+        child: _buildForm())
+      
     );
   }
 
   
 
-  Widget _buildForm() {
+  Widget _buildForm( ) {
     return Container(
       padding: EdgeInsets.all(15),
       child: Form(
@@ -40,6 +42,7 @@ class Perfil extends StatelessWidget {
                   height: 200,
                 ),
               TextFormField(
+                keyboardType: TextInputType.name,
                 controller: nomController,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -57,6 +60,7 @@ class Perfil extends StatelessWidget {
                 height: 15,
               ),
               TextFormField(
+                keyboardType: TextInputType.name,
                 controller: apController,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -74,6 +78,7 @@ class Perfil extends StatelessWidget {
                 height: 15,
               ),
               TextFormField(
+                keyboardType: TextInputType.name,
                 controller: amController,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -91,6 +96,7 @@ class Perfil extends StatelessWidget {
                 height: 15,
               ),
               TextFormField(
+                keyboardType: TextInputType.text,
                 controller: genController,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -108,6 +114,7 @@ class Perfil extends StatelessWidget {
                 height: 15,
               ),
               TextFormField(
+                keyboardType: TextInputType.text,
                 controller: ocuController,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -125,7 +132,7 @@ class Perfil extends StatelessWidget {
                 child: Text("Guardar"),
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                     
+                    
                       // actualizacion
                      
                     } else {
@@ -133,7 +140,6 @@ class Perfil extends StatelessWidget {
                       
                     }
                   }
-                
               )
             ],
           ),

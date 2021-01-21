@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login_ui/base/producto_model.dart';
 //import 'package:path/path.dart';
-//import 'package:flutter_login_ui/db/operation.dart';
-//import 'package:flutter_login_ui/screens/anuncio.dart';
-//import 'package:flutter_login_ui/screens/formulario.dart';
 //import 'package:flutter_login_ui/screens/perguar.dart';
 import 'package:flutter_login_ui/screens/Perfil.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_login_ui/providers/anuncios_provider.dart';
 
 class Home extends StatelessWidget {
   static const String ROUTE = "/home";
@@ -22,51 +20,15 @@ class _MyList extends StatefulWidget {
 }
 
 class __MyListState extends State<_MyList> {
-/*
-  @override
-  void initState() {
-    _loadData();
-
-    super.initState();
-  }*/
-
+  final anunciosProvider = new AnunciosProvider();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text("ANUNCIOS"),
         ),
-        body: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("roomi").snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              List<DocumentSnapshot> docs = snapshot.data.docs;
-
-              return Container(
-                child: ListView.builder(
-                    itemCount: docs.length,
-                    itemBuilder: (_, i) {
-                      Map<String, dynamic> data = docs[i].data();
-                      print("____");
-                      print(data);
-
-                      return ListTile(
-                        title: Text(data['title']),
-                      );
-                    }),
-              );
-            }),
-/* Container(
-          child: ListView.builder(
-            itemCount: notes.length,
-            itemBuilder: (_, i) => _createItem(i),
-          ),
-        ),*/
+        body: _crearListado(),
         drawer: Drawer(
             child: ListView(
           children: <Widget>[
@@ -85,11 +47,11 @@ class __MyListState extends State<_MyList> {
                   Navigator.pushNamed(context, Perfil.ROUTE);
                 }),
             ListTile(
-              title: Text('Formulario'),
+              title: Text('Mis anuncios'),
               leading: Icon(Icons.speaker_group),
             ),
             ListTile(
-              title: Text('Agregaregar Habitacion'),
+              title: Text('Agregar Habitacion'),
               leading: Icon(Icons.question_answer_outlined),
               onTap: () {
                 Navigator.pushNamed(context, '/anuncio');
@@ -105,21 +67,47 @@ class __MyListState extends State<_MyList> {
           ],
         )));
   }
-/*
-  _loadData() async {
-    List<Note> auxNote = await Operation.notes();
 
-    setState(() {
-      notes = auxNote;
-    });
+  Widget _crearListado() {
+    return FutureBuilder(
+      future: anunciosProvider.cargarProductos(),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<ProductoModel>> snapshot) {
+        if (snapshot.hasData) {
+          final productos = snapshot.data;
+
+          return ListView.builder(
+            itemCount: productos.length,
+            itemBuilder: (context, i) => _crearItem(context, productos[i]),
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 
-  _createItem(int i) {
-    return ListTile(
-      key: Key(i.toString()),
-      //direction: DismissDirection.startToEnd,
-
-      title: Text(notes[i].title),
-    );
-  }*/
+  Widget _crearItem(BuildContext context, ProductoModel producto) {
+    
+    return Container(
+        child: Card(
+          child: Column(
+            children: <Widget>[
+              (producto.fotoUrl == null)
+                  ? Image(image: AssetImage('assets/no-image.png'))
+                  : FadeInImage(
+                      image: NetworkImage(producto.fotoUrl),
+                      placeholder: AssetImage('assets/jar-loading.gif'),
+                      height: 300.0,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+              ListTile(
+                title: Text('${producto.nom} - ${producto.ciu}'),
+                subtitle: Text(producto.id),
+              ),
+            ],
+          ),
+        ));
+  }
 }
