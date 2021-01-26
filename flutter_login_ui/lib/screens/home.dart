@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login_ui/base/producto_model.dart';
+//import 'package:flutter_login_ui/base/usuario_model.dart';
 import 'package:flutter_login_ui/providers/anuncios_provider.dart';
-import 'package:flutter_login_ui/screens/perfil.dart';
+//import 'package:flutter_login_ui/screens/perfil.dart';
 import 'package:flutter_login_ui/search/search_delegate.dart';
-import 'package:flutter_login_ui/search/service.dart';
-
+//import 'package:flutter_login_ui/search/service.dart';
 
 class Home extends StatelessWidget {
   static const String ROUTE = "/home";
- final anunciosProvider = new AnunciosProvider();
+  final anunciosProvider = new AnunciosProvider();
   @override
   Widget build(BuildContext context) {
     return _MyList();
@@ -28,10 +28,6 @@ class __MyListState extends State<_MyList> {
 
   List<ProductoModel> users = List();
   @override
-
-
-
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,10 +35,10 @@ class __MyListState extends State<_MyList> {
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
-              showSearch(
-                context: context, 
-                delegate: DataSearch(),
-                // query: 'Hola'
+                showSearch(
+                  context: context,
+                  delegate: DataSearch(),
+                  // query: 'Hola'
                 );
               })
         ]),
@@ -51,23 +47,25 @@ class __MyListState extends State<_MyList> {
             child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text('Jose'),
-              accountEmail: Text('jose@gmail.com'),
+              accountName: Text('Angel '),
+              accountEmail: Text('angel.pooldiaz@itsva.edu.mx'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.purple,
-                child: Text('J', style: TextStyle(fontSize: 40.0)),
+                child: Text('A', style: TextStyle(fontSize: 40.0)),
               ),
             ),
             ListTile(
-                title: Text('Tu perfil'),
+                title: Text('Mi perfil'),
                 leading: Icon(Icons.supervised_user_circle),
                 onTap: () {
-                  Navigator.pushNamed(context, Perfil.ROUTE);
+                  Navigator.pushNamed(context, '/usuarios');
                 }),
             ListTile(
-              title: Text('Mis anuncios'),
-              leading: Icon(Icons.speaker_group),
-            ),
+                title: Text('Mis anuncios'),
+                leading: Icon(Icons.speaker_group),
+                onTap: () {
+                  Navigator.pushNamed(context, '/home');
+                }),
             ListTile(
               title: Text('Agregar Habitacion'),
               leading: Icon(Icons.question_answer_outlined),
@@ -122,11 +120,11 @@ class __MyListState extends State<_MyList> {
           ListTile(
             title: Text('${producto.nom} - ${producto.ciu}'),
             subtitle: Text(producto.id),
-            onTap: () => Navigator.pushNamed(context, '/anunciodetalle', arguments: producto ),
+            onTap: () => Navigator.pushNamed(context, '/anunciodetalle',
+                arguments: producto),
           ),
         ],
       ),
     ));
   }
-  
 }
