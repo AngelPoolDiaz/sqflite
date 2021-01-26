@@ -1,123 +1,129 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter_login_ui/base/producto_model.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'package:flutter_login_ui/base/producto_model.dart';
 import 'package:http_parser/http_parser.dart';
-
-import 'package:mime_type/mime_type.dart'; 
-
-
+import 'package:mime_type/mime_type.dart';
+//import 'dart:async';
 
 class AnunciosProvider {
+  String _url = 'https://roomitum-default-rtdb.firebaseio.com';
+  String _apikey = 'AIzaSyC177BIUd0-UFbDbnUOx1fjofYBhE-U0HY';
+  String _language = 'es-ES';
 
-  final String _url = 'https://roomitum-default-rtdb.firebaseio.com/';
-
-
-  Future<bool> crearProducto( ProductoModel producto ) async {
-    
-    final url = '$_url/producto.json';
-
-    final resp = await http.post( url, body: productoModelToJson(producto) );
-
+  Future<List<ProductoModel>> _procesarRespuesta(Uri url) async {
+    final resp = await http.get(url);
     final decodedData = json.decode(resp.body);
 
-    print( decodedData );
+    final peliculas = new ProductosModel.fromJsonList(decodedData['results']);
 
-    return true;
-
+    return peliculas.items;
   }
 
-  Future<bool> editarProducto( ProductoModel producto ) async {
-    
-    final url = '$_url/producto/${ producto.id }.json';
-
-    final resp = await http.put( url, body: productoModelToJson(producto) );
-
-    final decodedData = json.decode(resp.body);
-
-    print( decodedData );
-
-    return true;
-
-  }
-
-
-
-  Future<List<ProductoModel>> cargarProductos() async {
-
-    final url  = '$_url/producto.json';
+  Future<List<ProductoModel>> buscarPelicula(String query) async {
+    //final url = Uri.https(_url, '3/search/movie',
+    final url = Uri.https(_url, '3/search/movie',
+    {'api_key': _apikey, 'language': _language, 'query': query});
+    // final url = '$_url/producto.json';
+   // return await _procesarRespuesta(url);
     final resp = await http.get(url);
 
     final Map<String, dynamic> decodedData = json.decode(resp.body);
     final List<ProductoModel> productos = new List();
 
+    if (decodedData == null) return [];
 
-    if ( decodedData == null ) return [];
-
-    decodedData.forEach( ( id, prod ){
-
+    decodedData.forEach((id, prod) {
       final prodTemp = ProductoModel.fromJson(prod);
       prodTemp.id = id;
 
-      productos.add( prodTemp );
-
+      productos.add(prodTemp);
     });
 
     // print( productos[0].id );
 
     return productos;
-
   }
 
+  Future<bool> crearProducto(ProductoModel producto) async {
+    final url = '$_url/producto.json';
 
-  Future<int> borrarProducto( String id ) async { 
+    final resp = await http.post(url, body: productoModelToJson(producto));
 
-    final url  = '$_url/producto/$id.json';
+    final decodedData = json.decode(resp.body);
+
+    print(decodedData);
+
+    return true;
+  }
+
+  Future<bool> editarProducto(ProductoModel producto) async {
+    final url = '$_url/producto/${producto.id}.json';
+
+    final resp = await http.put(url, body: productoModelToJson(producto));
+
+    final decodedData = json.decode(resp.body);
+
+    print(decodedData);
+
+    return true;
+  }
+
+  Future<List<ProductoModel>> cargarProductos() async {
+    final url = '$_url/producto.json';
+    final resp = await http.get(url);
+
+    final Map<String, dynamic> decodedData = json.decode(resp.body);
+    final List<ProductoModel> productos = new List();
+
+    if (decodedData == null) return [];
+
+    decodedData.forEach((id, prod) {
+      final prodTemp = ProductoModel.fromJson(prod);
+      prodTemp.id = id;
+
+      productos.add(prodTemp);
+    });
+
+    // print( productos[0].id );
+
+    return productos;
+  }
+
+  Future<int> borrarProducto(String id) async {
+    final url = '$_url/producto/$id.json';
     final resp = await http.delete(url);
 
-    print( resp.body );
+    print(resp.body);
 
     return 1;
   }
 
-
-  Future<String> subirImagen( File imagen ) async {
-
-    final url = Uri.parse('https://api.cloudinary.com/v1_1/dc0tufkzf/image/upload?upload_preset=cwye3brj');
+  Future<String> subirImagen(File imagen) async {
+    final url = Uri.parse(
+        'https://api.cloudinary.com/v1_1/dc0tufkzf/image/upload?upload_preset=cwye3brj');
     final mimeType = mime(imagen.path).split('/'); //image/jpeg
 
-    final imageUploadRequest = http.MultipartRequest(
-      'POST',
-      url
-    );
+    final imageUploadRequest = http.MultipartRequest('POST', url);
 
-    final file = await http.MultipartFile.fromPath(
-      'file', 
-      imagen.path,
-      contentType: MediaType( mimeType[0], mimeType[1] )
-    );
+    final file = await http.MultipartFile.fromPath('file', imagen.path,
+        contentType: MediaType(mimeType[0], mimeType[1]));
 
     imageUploadRequest.files.add(file);
-
 
     final streamResponse = await imageUploadRequest.send();
     final resp = await http.Response.fromStream(streamResponse);
 
-    if ( resp.statusCode != 200 && resp.statusCode != 201 ) {
+    if (resp.statusCode != 200 && resp.statusCode != 201) {
       print('Algo salio mal');
-      print( resp.body );
+      print(resp.body);
       return null;
     }
 
     final respData = json.decode(resp.body);
-    print( respData);
+    print(respData);
 
     return respData['secure_url'];
-
-
   }
-
-
 }
-

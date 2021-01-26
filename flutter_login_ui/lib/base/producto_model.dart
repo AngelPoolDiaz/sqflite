@@ -1,10 +1,24 @@
-// To parse this JSON data, do
-//
 //     final productoModel = productoModelFromJson(jsonString);
-
 import 'dart:convert';
+//import 'package:flutter/services.dart';
+class ProductosModel {
 
-import 'package:flutter/services.dart';
+  List<ProductoModel> items = new List();
+
+  ProductosModel();
+
+  ProductosModel.fromJsonList( List<dynamic> jsonList  ) {
+
+    if ( jsonList == null ) return;
+
+    for ( var item in jsonList  ) {
+      final anuncio = new ProductoModel.fromJson(item);
+      items.add( anuncio );
+    }
+
+  }
+
+}
 
 ProductoModel productoModelFromJson(String str) => ProductoModel.fromJson(json.decode(str));
 
@@ -63,5 +77,14 @@ class ProductoModel {
         "post"      : post,
         "extr" : extr,
         "fotoUrl"    : fotoUrl,
-    };
+  };
+getPosterImg() {
+
+    if ( fotoUrl == null ) {
+      return 'assets/no-image.png';
+    } else {
+      return '$fotoUrl';
+    }
+
+  }
 }

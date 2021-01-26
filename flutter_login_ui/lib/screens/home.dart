@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login_ui/base/producto_model.dart';
-//import 'package:path/path.dart';
-//import 'package:flutter_login_ui/screens/perguar.dart';
-import 'package:flutter_login_ui/screens/Perfil.dart';
 import 'package:flutter_login_ui/providers/anuncios_provider.dart';
+import 'package:flutter_login_ui/screens/perfil.dart';
+import 'package:flutter_login_ui/search/search_delegate.dart';
+import 'package:flutter_login_ui/search/service.dart';
+
 
 class Home extends StatelessWidget {
   static const String ROUTE = "/home";
-
+ final anunciosProvider = new AnunciosProvider();
   @override
   Widget build(BuildContext context) {
     return _MyList();
@@ -22,12 +23,29 @@ class _MyList extends StatefulWidget {
 class __MyListState extends State<_MyList> {
   final anunciosProvider = new AnunciosProvider();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  ProductoModel productoSeleccionado;
+  List<ProductoModel> historial = [];
+
+  List<ProductoModel> users = List();
+  @override
+
+
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("ANUNCIOS"),
-        ),
+        appBar: AppBar(title: Text("ANUNCIOS"), actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+              showSearch(
+                context: context, 
+                delegate: DataSearch(),
+                // query: 'Hola'
+                );
+              })
+        ]),
         body: _crearListado(),
         drawer: Drawer(
             child: ListView(
@@ -88,26 +106,27 @@ class __MyListState extends State<_MyList> {
   }
 
   Widget _crearItem(BuildContext context, ProductoModel producto) {
-    
     return Container(
         child: Card(
-          child: Column(
-            children: <Widget>[
-              (producto.fotoUrl == null)
-                  ? Image(image: AssetImage('assets/no-image.png'))
-                  : FadeInImage(
-                      image: NetworkImage(producto.fotoUrl),
-                      placeholder: AssetImage('assets/jar-loading.gif'),
-                      height: 300.0,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-              ListTile(
-                title: Text('${producto.nom} - ${producto.ciu}'),
-                subtitle: Text(producto.id),
-              ),
-            ],
+      child: Column(
+        children: <Widget>[
+          (producto.fotoUrl == null)
+              ? Image(image: AssetImage('assets/no-image.png'))
+              : FadeInImage(
+                  image: NetworkImage(producto.fotoUrl),
+                  placeholder: AssetImage('assets/jar-loading.gif'),
+                  height: 300.0,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+          ListTile(
+            title: Text('${producto.nom} - ${producto.ciu}'),
+            subtitle: Text(producto.id),
+            onTap: () => Navigator.pushNamed(context, '/anunciodetalle', arguments: producto ),
           ),
-        ));
+        ],
+      ),
+    ));
   }
+  
 }

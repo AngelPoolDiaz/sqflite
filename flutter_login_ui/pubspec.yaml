@@ -28,6 +28,7 @@ dependencies:
   http:
   image_picker:
   mime_type:
+  dio: ^3.0.10
 
 dev_dependencies:
   flutter_test:
