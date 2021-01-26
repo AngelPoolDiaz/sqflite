@@ -11,7 +11,6 @@ class UsuarioProvider {
   String _url = 'https://roomitum-default-rtdb.firebaseio.com';
   
 
-  
 
   Future<bool> crearProducto(UsuarioModel usuario) async {
     final url = '$_url/usuario.json';
@@ -42,7 +41,7 @@ class UsuarioProvider {
     final resp = await http.get(url);
 
     final Map<String, dynamic> decodedData = json.decode(resp.body);
-    final List<UsuarioModel> productos = new List();
+    final List<UsuarioModel> usuarios = new List();
 
     if (decodedData == null) return [];
 
@@ -50,12 +49,12 @@ class UsuarioProvider {
       final prodTemp = UsuarioModel.fromJson(prod);
       prodTemp.id = id;
 
-      productos.add(prodTemp);
+      usuarios.add(prodTemp);
     });
 
     // print( productos[0].id );
 
-    return productos;
+    return usuarios;
   }
 
   Future<int> borrarProducto(String id) async {

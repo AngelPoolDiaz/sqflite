@@ -6,6 +6,26 @@ class DataSearch extends SearchDelegate {
   String seleccion = '';
   final anunciosProvider = new AnunciosProvider();
 
+  final anuncios = [
+    'Las guacamayas',
+    'Ecotel valladolid',
+    'Cuarto',
+    'Casa Prueba',
+    'Hotel Meson',
+    'valladolid',
+    'panaba',
+    'merida',
+    'popola',
+    'casa',
+    'Hotel',
+  ];
+
+  final anunciosRecientes = [
+    'Cuarto',
+    'Ecotel valladolid'
+  ];
+  
+
   @override
   List<Widget> buildActions(BuildContext context) {
     // Las acciones de nuestro AppBar
@@ -45,8 +65,32 @@ class DataSearch extends SearchDelegate {
       ),
     );
   }
+   @override
+   Widget buildSuggestions(BuildContext context) {
+     // Son las sugerencias que aparecen cuando la persona escribe
 
-  @override
+     final listaSugerida = ( query.isEmpty )
+                             ? anunciosRecientes
+                             : anuncios.where(
+                               (p)=> p.toLowerCase().startsWith(query.toLowerCase())
+                             ).toList();
+
+     return ListView.builder(
+       itemCount: listaSugerida.length,
+       itemBuilder: (context, i) {
+         return ListTile(
+           leading: Icon(Icons.movie),
+           title: Text(listaSugerida[i]),
+           onTap: (){
+             seleccion = listaSugerida[i];
+             showResults( context );
+           },
+         );
+       },
+     );
+   }
+}
+ /* @override
   Widget buildSuggestions(BuildContext context) {
     // Son las sugerencias que aparecen cuando la persona escribe
     if (query.isEmpty) {
@@ -75,54 +119,9 @@ class DataSearch extends SearchDelegate {
             return Center(child: CircularProgressIndicator());
           }
 
-/*
-  Widget _crearItem(BuildContext context, ProductoModel producto) {
-    return Container(
-        child: Card(
-      child: Column(
-        children: <Widget>[
-          (producto.fotoUrl == null)
-              ? Image(image: AssetImage('assets/no-image.png'))
-              : FadeInImage(
-                  image: NetworkImage(producto.fotoUrl),
-                  placeholder: AssetImage('assets/jar-loading.gif'),
-                  height: 300.0,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-          ListTile(
-            title: Text('${producto.nom} - ${producto.ciu}'),
-            subtitle: Text(producto.id),
-          ),
-        ],
-      ),
-    ));
-  }*/
-        });
-  }
-  // @override
-  // Widget buildSuggestions(BuildContext context) {
-  //   // Son las sugerencias que aparecen cuando la persona escribe
 
-  //   final listaSugerida = ( query.isEmpty )
-  //                           ? peliculasRecientes
-  //                           : peliculas.where(
-  //                             (p)=> p.toLowerCase().startsWith(query.toLowerCase())
-  //                           ).toList();
+        });*/
+  
 
-  //   return ListView.builder(
-  //     itemCount: listaSugerida.length,
-  //     itemBuilder: (context, i) {
-  //       return ListTile(
-  //         leading: Icon(Icons.movie),
-  //         title: Text(listaSugerida[i]),
-  //         onTap: (){
-  //           seleccion = listaSugerida[i];
-  //           showResults( context );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 
-}
+
